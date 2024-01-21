@@ -1,0 +1,15 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Query {
+  hello: String!
+}
+
+type Mutation {
+  createFile(create_file_input: CreateFileInput!): String!
+}
+
+input CreateFileInput {
+  numberInput: [Int!]!
+}
