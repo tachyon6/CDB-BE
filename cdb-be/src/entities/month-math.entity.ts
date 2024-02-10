@@ -13,6 +13,6 @@ export class MonthMath {
   @Field(() => Number)
   month: number;
 
-  @OneToMany(() => QuestionMath, (question) => question.math_month, { onDelete: 'CASCADE' })
+  @OneToMany(() => QuestionMath, (question) => question.month_math, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   questions: QuestionMath[];
 }

@@ -2,14 +2,112 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type TagMath {
+  tag_id: ID!
+  name: String!
+  questions: [QuestionMath!]!
+}
+
+type QuestionMath {
+  question_id: ID!
+  code: String!
+  download_url: String!
+  year: Float!
+  created_at: DateTime!
+  updated_at: DateTime!
+  tags: [TagMath!]!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type SubjectMathDto {
+  id: Float!
+  unit: String!
+}
+
+type SectionMathDto {
+  id: Float!
+  section: String!
+  unit_id: Float!
+  unit_name: String!
+}
+
+type DiffMathDto {
+  id: Float!
+  name: String!
+}
+
+type MonthMathDto {
+  id: Float!
+  month: Float!
+}
+
+type TagMathDto {
+  tag_id: Float!
+  name: String!
+}
+
+type QuestionMathDto {
+  code: String!
+  download_url: String!
+  year: Float!
+  section_math_ids: [Float!]!
+  diff_math_id: Float!
+  month_math_id: Float!
+  tag_ids: [Float!]!
+}
+
+type CurationListDto {
+  id: Float!
+  name: String!
+  list: String!
+}
+
 type Query {
   hello: String!
+  getAllSubjectMath: [SubjectMathDto!]
+  getAllSectionMath: [SectionMathDto!]
+  getAllDiffMath: [DiffMathDto!]
+  getAllMonthMath: [MonthMathDto!]
+  getAllTagMath: [TagMathDto!]
+  getFilterQuestionMath(filter_question_math: FilterQuestionMathDto!): [String!]
+  getCurationList: [CurationListDto!]
+}
+
+input FilterQuestionMathDto {
+  years: [Float!]
+  section_ids: [Float!]
+  diff_ids: [Float!]
+  month_ids: [Float!]
+  tag_ids: [Float!]
 }
 
 type Mutation {
-  createFile(create_file_input: CreateFileInput!): String!
+  createSubjectMath(unit: String!): SubjectMathDto!
+  createSectionMath(section: String!, unit_name: String!): SectionMathDto!
+  createDiffMath(name: String!): DiffMathDto!
+  createMonthMath(month: Float!): MonthMathDto!
+  createTagMath(name: String!): TagMathDto!
+  createQuestionMath(create_question_math: CreateQuestionMathDto!): QuestionMathDto!
+  updateQuestionMath(create_question_math: CreateQuestionMathDto!, code: String!): QuestionMathDto!
+  deleteQuestionMath(code: String!): String!
+  createCurationList(create_curation_list: CreateCurationListDto!): String!
 }
 
-input CreateFileInput {
-  numberInput: [Int!]!
+input CreateQuestionMathDto {
+  code: String!
+  download_url: String!
+  year: Float!
+  diff_math_id: Float!
+  month_math_id: Float!
+  section_math_ids: [Float!]!
+  tag_ids: [Float!]!
+}
+
+input CreateCurationListDto {
+  name: String!
+  list: String!
 }

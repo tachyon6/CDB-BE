@@ -13,6 +13,6 @@ export class DiffMath {
   @Field(() => String)
   name: string;
 
-  @OneToMany(() => QuestionMath, (question) => question.math_diff, { onDelete: 'CASCADE' })
+  @OneToMany(() => QuestionMath, (question) => question.diff_math, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   questions: QuestionMath[];
 }

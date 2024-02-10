@@ -1,6 +1,6 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { QuestionMath } from './question-math.entity';
+import { SectionMath } from './section-math.entity';
 
 @Entity('subject_math')
 @ObjectType()
@@ -13,10 +13,7 @@ export class SubjectMath {
   @Field(() => String)
   unit: string;
 
-  @Column()
-  @Field(() => String)
-  section: string;
+  @OneToMany(() => SectionMath, (section) => section.subject, { onDelete: 'CASCADE', onUpdate: 'CASCADE'})
+  sections: SectionMath[];
 
-  @OneToMany(() => QuestionMath, (question) => question.math_subject, { onDelete: 'CASCADE' })
-  questions: QuestionMath[];
 }

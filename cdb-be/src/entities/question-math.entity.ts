@@ -1,8 +1,8 @@
 import { Field, ID, ObjectType } from "@nestjs/graphql";
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { DiffMath } from "./diff-math.entity";
 import { MonthMath } from "./month-math.entity";
-import { SubjectMath } from "./subject-math.entity";
+import { SectionMath } from "./section-math.entity";
 import { TagMath } from "./tag-math.entity";
 
 @Entity('question_math')
@@ -10,42 +10,57 @@ import { TagMath } from "./tag-math.entity";
 export class QuestionMath{
     @PrimaryGeneratedColumn()
     @Field(() => ID)
-    id: number;
+    question_id: number;
 
-    @ManyToOne(() => SubjectMath, subject => subject.questions, {onDelete: 'CASCADE'})
-    @JoinColumn({name: 'subject_math_id'})
-    math_subject: SubjectMath;
+    @ManyToMany(() => SectionMath, section => section.questions, {onDelete: 'CASCADE', onUpdate: 'CASCADE'})
+    @JoinTable({
+        name: "mathq_sec",
+        joinColumn: {
+            name: "question_id",
+            referencedColumnName: "question_id",
+        },
+        inverseJoinColumn: {
+            name: "section_id",
+            referencedColumnName: "id",
+        },
+    })
+    sections: SectionMath[];
 
-    @ManyToOne(() => DiffMath, diff => diff.questions, {onDelete: 'CASCADE'})
+    @ManyToOne(() => DiffMath, diff => diff.questions, {onDelete: 'CASCADE', onUpdate: 'CASCADE'})
     @JoinColumn({name: 'diff_math_id'})
-    math_diff: DiffMath;
+    diff_math: DiffMath;
 
-    @ManyToOne(() => MonthMath, month => month.questions, {onDelete: 'CASCADE'})
+    @ManyToOne(() => MonthMath, month => month.questions, {onDelete: 'CASCADE', onUpdate: 'CASCADE'})
     @JoinColumn({name: 'month_math_id'})
-    math_month: MonthMath;
+    month_math: MonthMath;
 
     @Column()
+    @Field(() => String)
     code: string;
 
     @Column()
+    @Field(() => String)
     download_url: string;
 
     @Column()
+    @Field(() => Number)
     year: number;
 
-    @Column()
+    @CreateDateColumn()
+    @Field(() => Date)
     created_at: Date;
 
-    @Column()
+    @UpdateDateColumn()
+    @Field(() => Date)
     updated_at: Date;
 
     @Field(() => [TagMath])
     @ManyToMany(() => TagMath)
     @JoinTable({
-        name: "mathq_tag", // This specifies the join table name
+        name: "mathq_tag",
         joinColumn: {
             name: "question_id",
-            referencedColumnName: "id",
+            referencedColumnName: "question_id",
         },
         inverseJoinColumn: {
             name: "tag_id",
