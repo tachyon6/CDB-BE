@@ -1,4 +1,5 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { YearMath } from 'src/entities/year-math.entity';
 import {
     CreateCurationListDto,
   CreateQuestionMathDto,
@@ -10,6 +11,7 @@ import {
   SectionMathDto,
   SubjectMathDto,
   TagMathDto,
+  YearMathDto,
 } from './dto/math.dto';
 import { MathService } from './math.service';
 
@@ -60,6 +62,11 @@ export class MathResolver {
     return this.mathService.getAllTagMath();
   }
 
+  @Query(() => [YearMathDto], { nullable: true })
+    async getAllYearMath(): Promise<YearMathDto[]> {
+        return this.mathService.getAllYearMath();
+    }
+
   ////대단원 생성하기
 
   @Mutation(() => SubjectMathDto)
@@ -96,6 +103,16 @@ export class MathResolver {
   ): Promise<MonthMathDto> {
     return this.mathService.createMonthMath(month);
   }
+
+  //시행년도 생성하기
+
+  @Mutation(() => YearMathDto)
+  async createYearMath(
+    @Args('year') year: string,
+  ): Promise<YearMathDto> {
+    return this.mathService.createYearMath(year);
+  }
+
 
   //태그 생성하기
 

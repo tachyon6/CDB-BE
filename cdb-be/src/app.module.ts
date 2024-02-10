@@ -15,6 +15,7 @@ import { MathModule } from './math/math.module';
 import { SectionMath } from './entities/section-math.entity';
 import { CompleteMath } from './entities/complete-math.entity';
 import { CurationList } from './entities/curation_list.entity';
+import { YearMath } from './entities/year-math.entity';
 
 @Module({
   imports: [
@@ -32,7 +33,7 @@ import { CurationList } from './entities/curation_list.entity';
       username: process.env.MYSQL_USER,
       password: process.env.MYSQL_SECRET,
       database: process.env.MYSQL_DATABASE,
-      entities: [DiffMath, MonthMath, QuestionMath, SubjectMath, TagMath, SectionMath, CompleteMath, CurationList],
+      entities: [DiffMath, MonthMath, QuestionMath, SubjectMath, TagMath, SectionMath, CompleteMath, CurationList, YearMath],
       synchronize: false,
       timezone: 'Z',
     }),

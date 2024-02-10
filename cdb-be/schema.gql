@@ -25,14 +25,13 @@ scalar DateTime
 
 type SubjectMathDto {
   id: Float!
-  unit: String!
+  name: String!
+  bot: [SectionMathDto!]!
 }
 
 type SectionMathDto {
   id: Float!
-  section: String!
-  unit_id: Float!
-  unit_name: String!
+  name: String!
 }
 
 type DiffMathDto {
@@ -45,15 +44,20 @@ type MonthMathDto {
   month: Float!
 }
 
+type YearMathDto {
+  id: Float!
+  year: String!
+}
+
 type TagMathDto {
-  tag_id: Float!
+  id: Float!
   name: String!
 }
 
 type QuestionMathDto {
   code: String!
   download_url: String!
-  year: Float!
+  year_math_id: Float!
   section_math_ids: [Float!]!
   diff_math_id: Float!
   month_math_id: Float!
@@ -73,12 +77,13 @@ type Query {
   getAllDiffMath: [DiffMathDto!]
   getAllMonthMath: [MonthMathDto!]
   getAllTagMath: [TagMathDto!]
+  getAllYearMath: [YearMathDto!]
   getFilterQuestionMath(filter_question_math: FilterQuestionMathDto!): [String!]
   getCurationList: [CurationListDto!]
 }
 
 input FilterQuestionMathDto {
-  years: [Float!]
+  year_ids: [Float!]
   section_ids: [Float!]
   diff_ids: [Float!]
   month_ids: [Float!]
@@ -90,6 +95,7 @@ type Mutation {
   createSectionMath(section: String!, unit_name: String!): SectionMathDto!
   createDiffMath(name: String!): DiffMathDto!
   createMonthMath(month: Float!): MonthMathDto!
+  createYearMath(year: String!): YearMathDto!
   createTagMath(name: String!): TagMathDto!
   createQuestionMath(create_question_math: CreateQuestionMathDto!): QuestionMathDto!
   updateQuestionMath(create_question_math: CreateQuestionMathDto!, code: String!): QuestionMathDto!
@@ -100,7 +106,7 @@ type Mutation {
 input CreateQuestionMathDto {
   code: String!
   download_url: String!
-  year: Float!
+  year_math_id: Float!
   diff_math_id: Float!
   month_math_id: Float!
   section_math_ids: [Float!]!

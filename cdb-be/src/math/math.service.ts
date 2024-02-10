@@ -11,6 +11,7 @@ import {
   SectionMathDto,
   SubjectMathDto,
   TagMathDto,
+  YearMathDto,
 } from './dto/math.dto';
 import { SubjectMath } from 'src/entities/subject-math.entity';
 import { SectionMath } from 'src/entities/section-math.entity';
@@ -20,6 +21,7 @@ import { TagMath } from 'src/entities/tag-math.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { QuestionMath } from 'src/entities/question-math.entity';
 import { CurationList } from 'src/entities/curation_list.entity';
+import { YearMath } from 'src/entities/year-math.entity';
 
 @Injectable()
 export class MathService {
@@ -35,6 +37,8 @@ export class MathService {
     private diffMathRepository: Repository<DiffMath>,
     @InjectRepository(MonthMath)
     private monthMathRepository: Repository<MonthMath>,
+    @InjectRepository(YearMath)
+    private yearMathRepository: Repository<YearMath>,
   ) {}
 
   async hello(): Promise<string> {
@@ -51,7 +55,13 @@ export class MathService {
     if (existingSubject) {
       return {
         id: existingSubject.id,
-        unit: existingSubject.unit,
+        name: existingSubject.unit,
+        bot: existingSubject.sections.map((section) => {
+          return {
+            id: section.id,
+            name: section.section,
+          };
+        }),
       };
     }
 
@@ -75,7 +85,13 @@ export class MathService {
     }
     return {
       id: newSubject.id,
-      unit: newSubject.unit,
+      name: newSubject.unit,
+      bot: newSubject.sections.map((section) => {
+        return {
+          id: section.id,
+          name: section.section,
+        };
+      }),
     };
   }
 
@@ -84,12 +100,20 @@ export class MathService {
   async getAllSubjectMath(): Promise<SubjectMathDto[]> {
     const subjects = await this.dataSource
       .getRepository(SubjectMath)
-      .find();
+      .find({
+        relations: ['sections'],
+      });
 
     return subjects.map((subject) => {
       return {
         id: subject.id,
-        unit: subject.unit,
+        name: subject.unit,
+        bot: subject.sections.map((section) => {
+          return {
+            id: section.id,
+            name: section.section,
+          };
+        }),
       };
     });
   }
@@ -101,14 +125,12 @@ export class MathService {
       .getRepository(SectionMath)
       .find({
         relations: ['subject'],
-      })
+      });
 
     return sections.map((section) => {
       return {
         id: section.id,
-        section: section.section,
-        unit_id: section.subject.id,
-        unit_name: section.subject.unit,
+        name: section.section,
       };
     });
   }
@@ -150,8 +172,23 @@ export class MathService {
 
     return tags.map((tag) => {
       return {
-        tag_id: tag.tag_id,
+        id: tag.tag_id,
         name: tag.name,
+      };
+    });
+  }
+
+  //// 시행연도 목록 가져오기
+
+  async getAllYearMath(): Promise<YearMathDto[]> {
+    const years = await this.dataSource
+      .getRepository(YearMath)
+      .find();
+
+    return years.map((year) => {
+      return {
+        id: year.id,
+        year: year.year,
       };
     });
   }
@@ -172,9 +209,7 @@ export class MathService {
     if (existingSection) {
       return {
         id: existingSection.id,
-        section: existingSection.section,
-        unit_id: existingSection.subject.id,
-        unit_name: existingSection.subject.unit,
+        name: existingSection.section,
       };
     }
 
@@ -209,9 +244,7 @@ export class MathService {
 
     return {
       id: newSection.id,
-      section: newSection.section,
-      unit_id: newSection.subject.id,
-      unit_name: newSection.subject.unit,
+      name: newSection.section,
     };
   }
 
@@ -291,6 +324,44 @@ export class MathService {
     };
   }
 
+  ////시행연도 생성하기
+
+  async createYearMath(year: string): Promise<YearMathDto> {
+    const existingYear = await this.dataSource
+      .getRepository(YearMath)
+      .findOne({ where: { year: year } });
+
+    if (existingYear) {
+      return {
+        id: existingYear.id,
+        year: existingYear.year,
+      };
+    }
+
+    const result = await this.dataSource
+      .createQueryBuilder()
+      .insert()
+      .into(YearMath)
+      .values({ year: year })
+      .execute();
+
+    const newYearId = result.identifiers[0].id;
+
+    const newYear = await this.dataSource
+      .getRepository(YearMath)
+      .findOne({
+        where: { id: newYearId },
+      });
+
+    if (!newYear) {
+      throw new Error('없는 시행연도입니다.');
+    }
+    return {
+      id: newYear.id,
+      year: newYear.year,
+    };
+  }
+
   //// 태그 생성하기
   async createTagMath(name: string): Promise<TagMathDto> {
     const existingTag = await this.dataSource
@@ -299,7 +370,7 @@ export class MathService {
 
     if (existingTag) {
       return {
-        tag_id: existingTag.tag_id,
+        id: existingTag.tag_id,
         name: existingTag.name,
       };
     }
@@ -323,7 +394,7 @@ export class MathService {
       throw new Error('없는 태그입니다.');
     }
     return {
-      tag_id: newTag.tag_id,
+      id: newTag.tag_id,
       name: newTag.name,
     };
   }
@@ -338,6 +409,7 @@ export class MathService {
       tag_ids,
       diff_math_id,
       month_math_id,
+      year_math_id,
       ...questionDetails
     } = createQuestionMathDto;
 
@@ -351,7 +423,11 @@ export class MathService {
     if (existingQuestion) {
       throw new Error('이미 존재하는 문제 코드입니다.');
     }
-    // DiffMath 및 MonthMath 엔티티 조회
+
+    const yearMath = await this.yearMathRepository.findOneBy({
+      id: year_math_id,
+    });
+
     const diffMath = await this.diffMathRepository.findOneBy({
       id: diff_math_id,
     });
@@ -365,6 +441,7 @@ export class MathService {
     // QuestionMath 엔티티 생성
     const question = this.questionMathRepository.create({
       ...questionDetails,
+      year_math: yearMath,
       diff_math: diffMath,
       month_math: monthMath,
     });
@@ -393,7 +470,7 @@ export class MathService {
     return {
       code: savedQuestion.code,
       download_url: savedQuestion.download_url,
-      year: savedQuestion.year,
+      year_math_id: savedQuestion.year_math.id,
       section_math_ids:
         savedQuestion.sections?.map((section) => section.id) || [],
       diff_math_id: savedQuestion.diff_math.id,
@@ -407,16 +484,17 @@ export class MathService {
   async getFilterQuestionMath(
     filterQuestionDto: FilterQuestionMathDto,
   ): Promise<String[]> {
-    const { years, section_ids, diff_ids, month_ids, tag_ids } =
+    const { year_ids, section_ids, diff_ids, month_ids, tag_ids } =
       filterQuestionDto;
 
     const queryBuilder =
       this.questionMathRepository.createQueryBuilder('question');
 
-    if (years && years.length > 0) {
-      queryBuilder.andWhere('question.year IN (:...years)', {
-        years,
-      });
+    if (year_ids && year_ids.length > 0) {
+      queryBuilder.andWhere(
+        'question.year_math_id IN (:...year_ids)',
+        { year_ids },
+      );
     }
 
     if (section_ids && section_ids.length > 0) {
@@ -467,6 +545,7 @@ export class MathService {
       tag_ids,
       diff_math_id,
       month_math_id,
+      year_math_id,
       ...questionDetails
     } = createQuestionMathDto;
 
@@ -478,19 +557,21 @@ export class MathService {
       throw new Error('QuestionMath entity not found.');
     }
 
-    // DiffMath 및 MonthMath 엔티티 조회
+    const yearMath = await this.yearMathRepository.findOneBy({
+      id: year_math_id,
+    });
     const diffMath = await this.diffMathRepository.findOneBy({
       id: diff_math_id,
     });
     const monthMath = await this.monthMathRepository.findOneBy({
       id: month_math_id,
     });
-    if (!diffMath || !monthMath) {
+    if (!diffMath || !monthMath || !yearMath) {
       throw new Error('DiffMath or MonthMath entity not found.');
     }
 
     // QuestionMath 엔티티 수정
-    question.year = questionDetails.year;
+    question.year_math = yearMath;
     question.code = questionDetails.code;
     question.download_url = questionDetails.download_url;
     question.diff_math = diffMath;
@@ -524,7 +605,7 @@ export class MathService {
     return {
       code: savedQuestion.code,
       download_url: savedQuestion.download_url,
-      year: savedQuestion.year,
+      year_math_id: savedQuestion.year_math.id,
       section_math_ids:
         savedQuestion.sections?.map((section) => section.id) || [],
       diff_math_id: savedQuestion.diff_math.id,

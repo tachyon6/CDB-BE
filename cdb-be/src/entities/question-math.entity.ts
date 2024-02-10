@@ -4,6 +4,7 @@ import { DiffMath } from "./diff-math.entity";
 import { MonthMath } from "./month-math.entity";
 import { SectionMath } from "./section-math.entity";
 import { TagMath } from "./tag-math.entity";
+import { YearMath } from "./year-math.entity";
 
 @Entity('question_math')
 @ObjectType()
@@ -33,6 +34,10 @@ export class QuestionMath{
     @ManyToOne(() => MonthMath, month => month.questions, {onDelete: 'CASCADE', onUpdate: 'CASCADE'})
     @JoinColumn({name: 'month_math_id'})
     month_math: MonthMath;
+
+    @ManyToOne(() => YearMath , year => year.questions, {onDelete: 'CASCADE', onUpdate: 'CASCADE'})
+    @JoinColumn({name: 'year_math_id'})
+    year_math: YearMath;
 
     @Column()
     @Field(() => String)

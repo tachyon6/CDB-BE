@@ -6,7 +6,10 @@ export class SubjectMathDto {
     id: number;
     
     @Field(() => String)
-    unit: string;
+    name: string;
+
+    @Field(() => [SectionMathDto])
+    bot: SectionMathDto[];
 }
 
 @ObjectType()
@@ -15,13 +18,7 @@ export class SectionMathDto {
     id: number;
 
     @Field(() => String)
-    section: string;
-
-    @Field(() => Number)
-    unit_id: number;
-
-    @Field(() => String)
-    unit_name: string;
+    name: string;
 }
 
 @ObjectType()
@@ -43,9 +40,19 @@ export class MonthMathDto {
 }
 
 @ObjectType()
+export class YearMathDto {
+
+    @Field(() => Number)
+    id: number;
+
+    @Field(() => String)
+    year: string;
+}
+
+@ObjectType()
 export class TagMathDto {
     @Field(() => Number)
-    tag_id: number;
+    id: number;
 
     @Field(() => String)
     name: string;
@@ -60,7 +67,7 @@ export class QuestionMathDto {
     download_url: string;
   
     @Field(() => Number)
-    year: number;
+    year_math_id: number;
 
     @Field(() => [Number])
     section_math_ids: number[];
@@ -84,7 +91,7 @@ export class CreateQuestionMathDto {
     download_url: string;
 
     @Field(() => Number)
-    year: number;
+    year_math_id: number;
 
     @Field(() => Number)
     diff_math_id: number;
@@ -102,7 +109,7 @@ export class CreateQuestionMathDto {
 @InputType()
 export class FilterQuestionMathDto {
     @Field(() => [Number], {nullable: true})
-    years: number[];
+    year_ids: number[];
 
     @Field(() => [Number], {nullable: true})
     section_ids: number[];

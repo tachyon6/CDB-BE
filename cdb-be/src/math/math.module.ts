@@ -10,6 +10,7 @@ import { TagMath } from 'src/entities/tag-math.entity';
 import { CompleteMath } from 'src/entities/complete-math.entity';
 import { SectionMath } from 'src/entities/section-math.entity';
 import { CurationList } from 'src/entities/curation_list.entity';
+import { YearMath } from 'src/entities/year-math.entity';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { CurationList } from 'src/entities/curation_list.entity';
       CompleteMath,
       SectionMath,
       CurationList,
+      YearMath,
     ]),
   ],
   exports: [MathService, MathResolver],
