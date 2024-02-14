@@ -12,7 +12,6 @@ type QuestionMath {
   question_id: ID!
   code: String!
   download_url: String!
-  year: Float!
   created_at: DateTime!
   updated_at: DateTime!
   tags: [TagMath!]!
@@ -41,7 +40,7 @@ type DiffMathDto {
 
 type MonthMathDto {
   id: Float!
-  month: Float!
+  name: String!
 }
 
 type YearMathDto {
@@ -66,6 +65,7 @@ type QuestionMathDto {
 
 type CurationListDto {
   id: Float!
+  subject: String!
   name: String!
   list: String!
 }
@@ -94,7 +94,7 @@ type Mutation {
   createSubjectMath(unit: String!): SubjectMathDto!
   createSectionMath(section: String!, unit_name: String!): SectionMathDto!
   createDiffMath(name: String!): DiffMathDto!
-  createMonthMath(month: Float!): MonthMathDto!
+  createMonthMath(month: String!): MonthMathDto!
   createYearMath(year: String!): YearMathDto!
   createTagMath(name: String!): TagMathDto!
   createQuestionMath(create_question_math: CreateQuestionMathDto!): QuestionMathDto!
@@ -115,5 +115,6 @@ input CreateQuestionMathDto {
 
 input CreateCurationListDto {
   name: String!
+  subject: String!
   list: String!
 }

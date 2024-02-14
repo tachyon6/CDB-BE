@@ -160,7 +160,7 @@ export class MathService {
     return months.map((month) => {
       return {
         id: month.id,
-        month: month.month,
+        name: month.month,
       };
     });
   }
@@ -288,7 +288,7 @@ export class MathService {
 
   ////시행월 생성하기
 
-  async createMonthMath(month: number): Promise<MonthMathDto> {
+  async createMonthMath(month: string): Promise<MonthMathDto> {
     const existingMonth = await this.dataSource
       .getRepository(MonthMath)
       .findOne({ where: { month: month } });
@@ -296,7 +296,7 @@ export class MathService {
     if (existingMonth) {
       return {
         id: existingMonth.id,
-        month: existingMonth.month,
+        name: existingMonth.month,
       };
     }
 
@@ -320,7 +320,7 @@ export class MathService {
     }
     return {
       id: newMonth.id,
-      month: newMonth.month,
+      name: newMonth.month,
     };
   }
 
@@ -434,7 +434,7 @@ export class MathService {
     const monthMath = await this.monthMathRepository.findOneBy({
       id: month_math_id,
     });
-    if (!diffMath || !monthMath) {
+    if (!diffMath || !monthMath || !yearMath) {
       throw new Error('DiffMath or MonthMath entity not found.');
     }
 
@@ -634,7 +634,7 @@ export class MathService {
   async createCurationList(
     createCurationListDto: CreateCurationListDto,
   ): Promise<String> {
-    const { name, list } = createCurationListDto;
+    const { name, list, subject } = createCurationListDto;
 
     await this.dataSource
       .getRepository(CurationList)
@@ -643,6 +643,7 @@ export class MathService {
       .into(CurationList)
       .values({
         name: name,
+        subject: subject ,
         list: list,
       })
       .execute();
@@ -660,6 +661,7 @@ export class MathService {
 
     return curationLists.map((curationList) => ({
       id: curationList.id,
+      subject: curationList.subject,
       name: curationList.name,
       list: curationList.list,
     }));

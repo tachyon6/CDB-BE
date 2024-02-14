@@ -10,8 +10,8 @@ export class MonthMath {
   id: number;
 
   @Column()
-  @Field(() => Number)
-  month: number;
+  @Field(() => String)
+  month: string;
 
   @OneToMany(() => QuestionMath, (question) => question.month_math, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
   questions: QuestionMath[];

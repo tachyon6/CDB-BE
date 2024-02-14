@@ -35,8 +35,8 @@ export class MonthMathDto {
     @Field(() => Number)
     id: number;
 
-    @Field(() => Number)
-    month: number;
+    @Field(() => String)
+    name: string
 }
 
 @ObjectType()
@@ -130,6 +130,9 @@ export class CreateCurationListDto {
     name: string;
 
     @Field(() => String)
+    subject: string;
+
+    @Field(() => String)
     list: string;
 }
 
@@ -137,6 +140,9 @@ export class CreateCurationListDto {
 export class CurationListDto {
     @Field(() => Number)
     id: number;
+
+    @Field(() => String)
+    subject: string;
 
     @Field(() => String)
     name: string;

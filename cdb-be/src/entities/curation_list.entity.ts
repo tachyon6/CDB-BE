@@ -9,6 +9,10 @@ export class CurationList {
 
   @Column()
   @Field(() => String)
+  subject: string;
+
+  @Column()
+  @Field(() => String)
   name: string;
 
   @Column()

@@ -47,10 +47,6 @@ export class QuestionMath{
     @Field(() => String)
     download_url: string;
 
-    @Column()
-    @Field(() => Number)
-    year: number;
-
     @CreateDateColumn()
     @Field(() => Date)
     created_at: Date;

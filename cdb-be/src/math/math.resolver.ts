@@ -99,7 +99,7 @@ export class MathResolver {
 
   @Mutation(() => MonthMathDto)
   async createMonthMath(
-    @Args('month') month: number,
+    @Args('month') month: string,
   ): Promise<MonthMathDto> {
     return this.mathService.createMonthMath(month);
   }
