@@ -3,7 +3,6 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { CreateFileModule } from './create-file/create-file.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { DiffMath } from './entities/diff-math.entity';
@@ -16,6 +15,9 @@ import { SectionMath } from './entities/section-math.entity';
 import { CompleteMath } from './entities/complete-math.entity';
 import { CurationList } from './entities/curation_list.entity';
 import { YearMath } from './entities/year-math.entity';
+import { CombinatorModule } from './combinator/combinator.module';
+
+
 
 @Module({
   imports: [
@@ -37,7 +39,7 @@ import { YearMath } from './entities/year-math.entity';
       synchronize: false,
       timezone: 'Z',
     }),
-    //CreateFileModule,
+    CombinatorModule,
     MathModule,
   ],
   controllers: [AppController],

@@ -91,6 +91,7 @@ input FilterQuestionMathDto {
 }
 
 type Mutation {
+  combine(complete_file_input: CompleteFileInput!): String!
   createSubjectMath(unit: String!): SubjectMathDto!
   createSectionMath(section: String!, unit_name: String!): SectionMathDto!
   createDiffMath(name: String!): DiffMathDto!
@@ -101,6 +102,11 @@ type Mutation {
   updateQuestionMath(create_question_math: CreateQuestionMathDto!, code: String!): QuestionMathDto!
   deleteQuestionMath(code: String!): String!
   createCurationList(create_curation_list: CreateCurationListDto!): String!
+}
+
+input CompleteFileInput {
+  question_codes: [Int!]!
+  file_name: String!
 }
 
 input CreateQuestionMathDto {
