@@ -64,6 +64,9 @@ export class QuestionMathDto {
     code: string;
 
     @Field(() => String)
+    answer: string;
+
+    @Field(() => String)
     download_url: string;
   
     @Field(() => Number)
@@ -86,6 +89,9 @@ export class QuestionMathDto {
 export class CreateQuestionMathDto {
     @Field(() => String)
     code: string;
+
+    @Field(() => String)
+    answer: string;
 
     @Field(() => String)
     download_url: string;
@@ -150,3 +156,4 @@ export class CurationListDto {
     @Field(() => String)
     list: string;
 }
+

@@ -39,7 +39,7 @@ export class MathService {
     private monthMathRepository: Repository<MonthMath>,
     @InjectRepository(YearMath)
     private yearMathRepository: Repository<YearMath>,
-  ) {}
+  ) { }
 
   async hello(): Promise<string> {
     return 'Hello World!';
@@ -421,7 +421,7 @@ export class MathService {
       });
 
     if (existingQuestion) {
-      throw new Error('이미 존재하는 문제 코드입니다.');
+      return this.updateQuestionMath(questionDetails.code, createQuestionMathDto);
     }
 
     const yearMath = await this.yearMathRepository.findOneBy({
@@ -469,6 +469,7 @@ export class MathService {
     // QuestionMath 엔티티를 QuestionMathDto로 변환
     return {
       code: savedQuestion.code,
+      answer: savedQuestion.answer,
       download_url: savedQuestion.download_url,
       year_math_id: savedQuestion.year_math.id,
       section_math_ids:
@@ -572,7 +573,7 @@ export class MathService {
 
     // QuestionMath 엔티티 수정
     question.year_math = yearMath;
-    question.code = questionDetails.code;
+    question.answer = questionDetails.answer;
     question.download_url = questionDetails.download_url;
     question.diff_math = diffMath;
     question.month_math = monthMath;
@@ -596,7 +597,6 @@ export class MathService {
     } else {
       question.tags = [];
     }
-
     // 수정된 QuestionMath 엔티티 저장
     const savedQuestion =
       await this.questionMathRepository.save(question);
@@ -604,6 +604,7 @@ export class MathService {
     // QuestionMath 엔티티를 QuestionMathDto로 변환
     return {
       code: savedQuestion.code,
+      answer: savedQuestion.answer,
       download_url: savedQuestion.download_url,
       year_math_id: savedQuestion.year_math.id,
       section_math_ids:
@@ -643,7 +644,7 @@ export class MathService {
       .into(CurationList)
       .values({
         name: name,
-        subject: subject ,
+        subject: subject,
         list: list,
       })
       .execute();
@@ -666,4 +667,5 @@ export class MathService {
       list: curationList.list,
     }));
   }
+
 }

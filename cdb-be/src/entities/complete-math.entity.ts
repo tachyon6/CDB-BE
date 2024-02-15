@@ -1,7 +1,7 @@
 import { Field, ID, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity('complete_math')
+@Entity('math_complete')
 @ObjectType()
 export class CompleteMath {
     @PrimaryGeneratedColumn()

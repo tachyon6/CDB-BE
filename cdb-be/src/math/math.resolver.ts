@@ -1,7 +1,7 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { YearMath } from 'src/entities/year-math.entity';
 import {
-    CreateCurationListDto,
+  CreateCurationListDto,
   CreateQuestionMathDto,
   CurationListDto,
   DiffMathDto,
@@ -17,7 +17,7 @@ import { MathService } from './math.service';
 
 @Resolver()
 export class MathResolver {
-  constructor(private readonly mathService: MathService) {}
+  constructor(private readonly mathService: MathService) { }
 
   ////테스트용
 
@@ -63,9 +63,9 @@ export class MathResolver {
   }
 
   @Query(() => [YearMathDto], { nullable: true })
-    async getAllYearMath(): Promise<YearMathDto[]> {
-        return this.mathService.getAllYearMath();
-    }
+  async getAllYearMath(): Promise<YearMathDto[]> {
+    return this.mathService.getAllYearMath();
+  }
 
   ////대단원 생성하기
 
@@ -153,24 +153,26 @@ export class MathResolver {
     return this.mathService.updateQuestionMath(code, createQuestionMathDto);
   }
 
-    ////문항 삭제
-    @Mutation(() => String)
-    async deleteQuestionMath(
-        @Args('code') code: string,
-    ): Promise<String> {
-        return this.mathService.deleteQuestionMath(code);
-    }
+  ////문항 삭제
+  @Mutation(() => String)
+  async deleteQuestionMath(
+    @Args('code') code: string,
+  ): Promise<String> {
+    return this.mathService.deleteQuestionMath(code);
+  }
 
-    ////선별 리스트 생성하기
-    @Mutation(() => String)
-    async createCurationList(
-        @Args('create_curation_list') createCurationList: CreateCurationListDto
-    ): Promise<String> {
-        return this.mathService.createCurationList(createCurationList);
-    }
+  ////선별 리스트 생성하기
+  @Mutation(() => String)
+  async createCurationList(
+    @Args('create_curation_list') createCurationList: CreateCurationListDto
+  ): Promise<String> {
+    return this.mathService.createCurationList(createCurationList);
+  }
 
-    @Query(() => [CurationListDto], { nullable: true })
-    async getCurationList(): Promise<CurationListDto[]> {
-        return this.mathService.getCurationList();
-    }
+  @Query(() => [CurationListDto], { nullable: true })
+  async getCurationList(): Promise<CurationListDto[]> {
+    return this.mathService.getCurationList();
+  }
+
+
 }
