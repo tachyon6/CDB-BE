@@ -45,6 +45,10 @@ export class QuestionMath{
 
     @Column()
     @Field(() => String)
+    answer: string;
+
+    @Column()
+    @Field(() => String)
     download_url: string;
 
     @CreateDateColumn()

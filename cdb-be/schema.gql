@@ -11,6 +11,7 @@ type TagMath {
 type QuestionMath {
   question_id: ID!
   code: String!
+  answer: String!
   download_url: String!
   created_at: DateTime!
   updated_at: DateTime!
@@ -55,6 +56,7 @@ type TagMathDto {
 
 type QuestionMathDto {
   code: String!
+  answer: String!
   download_url: String!
   year_math_id: Float!
   section_math_ids: [Float!]!
@@ -105,12 +107,13 @@ type Mutation {
 }
 
 input CompleteFileInput {
-  question_codes: [Int!]!
+  question_codes: [String!]!
   file_name: String!
 }
 
 input CreateQuestionMathDto {
   code: String!
+  answer: String!
   download_url: String!
   year_math_id: Float!
   diff_math_id: Float!
