@@ -532,7 +532,7 @@ export class MathService {
 
     const questions = await queryBuilder.getMany();
 
-    return questions.map((question) => question.code);
+    return questions.map((question) => question.code).sort();
   }
 
   ////문제 수정하기

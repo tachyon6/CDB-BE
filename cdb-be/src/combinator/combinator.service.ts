@@ -27,11 +27,11 @@ export class CombinatorService {
 
     async getQuestionAnswers(codes: Codes): Promise<string[]> {
         const questions = await this.dataSource
-          .getRepository(QuestionMath)
-          .find({ where: { code: In(codes.question_codes) } });
-    
+            .getRepository(QuestionMath)
+            .find({ where: { code: In(codes.question_codes) } });
+
         return questions.map((question) => question.answer);
-      }
+    }
 
     async combine(completeFileInput: CompleteFileInput): Promise<string> {
         return new Promise<string>(async (resolve, reject) => {
@@ -71,12 +71,19 @@ export class CombinatorService {
                 python.on('close', async (code) => {
                     if (code === 0) {
                         console.log(`File Created Complete ${code}`);
-                        const completeMath = this.dataSource.getRepository(CompleteMath).create({
-                            code: fileName,
-                            download_url: `https://cdb-math.s3.ap-northeast-2.amazonaws.com/uploads/results/${fileName}.pdf`
-                        });
-                        await this.dataSource.getRepository(CompleteMath).save(completeMath);
-                        resolve(fileName);
+
+                        const existingMath = await this.dataSource.getRepository(CompleteMath).findOne({ where: { code: fileName } });
+
+                        if (existingMath) {
+                            resolve(fileName);
+                        } else {
+                            const completeMath = this.dataSource.getRepository(CompleteMath).create({
+                                code: fileName,
+                                download_url: `https://cdb-math.s3.ap-northeast-2.amazonaws.com/uploads/results/${fileName}.pdf`
+                            });
+                            await this.dataSource.getRepository(CompleteMath).save(completeMath);
+                            resolve(fileName);
+                        }
                     } else {
                         console.error(`Error: Python script exited with code ${code}`);
                         reject(`Python script exited with code ${code}`);
@@ -94,11 +101,11 @@ export class CombinatorService {
                 });
 
                 python_answer.on('close', (code) => {
-                   if (code === 0) {
-                       console.log(`Answer Complete ${code}`);
-                   } else {
-                          console.error(`Error: Python script exited with code ${code}`);
-                     }
+                    if (code === 0) {
+                        console.log(`Answer Complete ${code}`);
+                    } else {
+                        console.error(`Error: Python script exited with code ${code}`);
+                    }
                 });
 
             } catch (error) {
