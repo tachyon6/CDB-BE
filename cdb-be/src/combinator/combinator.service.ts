@@ -26,11 +26,14 @@ export class CombinatorService {
     }
 
     async getQuestionAnswers(codes: Codes): Promise<string[]> {
+        const uniqueCodes = [...new Set(codes.question_codes)];
         const questions = await this.dataSource
             .getRepository(QuestionMath)
-            .find({ where: { code: In(codes.question_codes) } });
+            .findBy({ code: In(uniqueCodes) });
 
-        return questions.map((question) => question.answer);
+        const questionsMap = new Map(questions.map(question => [question.code, question.answer]));
+
+        return codes.question_codes.map(code => questionsMap.get(code) || '');
     }
 
     async combine(completeFileInput: CompleteFileInput): Promise<string> {
@@ -38,7 +41,7 @@ export class CombinatorService {
             const title = completeFileInput.file_name;
             const inputArgs = completeFileInput.question_codes;
 
-            const inputString = inputArgs.sort().join('_');
+            const inputString = inputArgs.join('_');
             const fileName = createHash('md5').update(inputString).digest('hex');
 
 

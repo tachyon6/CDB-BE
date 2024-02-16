@@ -16,6 +16,7 @@ import { CompleteMath } from './entities/complete-math.entity';
 import { CurationList } from './entities/curation_list.entity';
 import { YearMath } from './entities/year-math.entity';
 import { CombinatorModule } from './combinator/combinator.module';
+import { AdminModule } from './admin/admin.module';
 
 
 
@@ -41,6 +42,7 @@ import { CombinatorModule } from './combinator/combinator.module';
     }),
     CombinatorModule,
     MathModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [AppService],
