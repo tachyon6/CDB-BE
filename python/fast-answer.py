@@ -3,6 +3,10 @@ import sys
 import os
 import boto3
 
+project_root = os.getcwd()
+
+ans_basic_hwp_path = os.path.join(project_root, "test_hwp", "Answer.hwp")
+ans_pdf_result_path = os.path.join(project_root, "test_hwp", "pdf_results_ans")
 
 def init_hwp():
     hwp = win32.gencache.EnsureDispatch("hwpframe.hwpobject")
@@ -11,7 +15,7 @@ def init_hwp():
     return hwp
 
 def basic_file():
-    filePath = "C:\\Users\\송준혁\\CDB-BE\\cdb-be\\test_hwp\\Answer.hwp"
+    filePath = ans_basic_hwp_path
     hwp.Open(filePath, "HWP", "forceopen:true")
 
 def push_number_and_answer(num, answer):
@@ -72,7 +76,7 @@ if __name__ == "__main__":
     for i in range(len(answers)):
         push_number_and_answer(i+1, answers[i])
 
-    file_pdf = "C:\\Users\\송준혁\\CDB-BE\\cdb-be\\test_hwp\\pdf_results_ans\\{}.pdf".format(fileName)
+    file_pdf = os.path.join(ans_pdf_result_path, f"{fileName}.pdf")
     hwpToPDF(file_pdf)
 
     upload_file_to_s3(file_pdf, "cdb-math", f"uploads/results_ans/{fileName}.pdf")

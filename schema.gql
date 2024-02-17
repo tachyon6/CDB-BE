@@ -72,12 +72,20 @@ type CurationListDto {
   list: String!
 }
 
+type DownloadLogDto {
+  id: Int!
+  title: String!
+  input: String!
+  created_at: String!
+}
+
 type JwtToken {
   accessToken: String!
 }
 
 type Query {
   hello: String!
+  getDownloadLogByDay(date: String!): [DownloadLogDto!]
   getAllSubjectMath: [SubjectMathDto!]
   getAllSectionMath: [SectionMathDto!]
   getAllDiffMath: [DiffMathDto!]
@@ -99,6 +107,7 @@ input FilterQuestionMathDto {
 }
 
 type Mutation {
+  createDownloadLog(title: String!, input: String!): String!
   combine(complete_file_input: CompleteFileInput!): String!
   createSubjectMath(unit: String!): SubjectMathDto!
   createSectionMath(section: String!, unit_name: String!): SectionMathDto!

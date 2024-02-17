@@ -17,6 +17,7 @@ import { CurationList } from './entities/curation_list.entity';
 import { YearMath } from './entities/year-math.entity';
 import { CombinatorModule } from './combinator/combinator.module';
 import { AdminModule } from './admin/admin.module';
+import { DownloadLog } from './entities/download-log.entity';
 
 
 
@@ -36,9 +37,9 @@ import { AdminModule } from './admin/admin.module';
       username: process.env.MYSQL_USER,
       password: process.env.MYSQL_SECRET,
       database: process.env.MYSQL_DATABASE,
-      entities: [DiffMath, MonthMath, QuestionMath, SubjectMath, TagMath, SectionMath, CompleteMath, CurationList, YearMath],
+      entities: [DiffMath, MonthMath, QuestionMath, SubjectMath, TagMath, SectionMath, CompleteMath, CurationList, YearMath, DownloadLog],
       synchronize: false,
-      timezone: 'Z',
+      timezone: 'Asia/Seoul' 
     }),
     CombinatorModule,
     MathModule,
@@ -47,4 +48,4 @@ import { AdminModule } from './admin/admin.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

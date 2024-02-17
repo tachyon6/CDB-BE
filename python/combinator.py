@@ -5,6 +5,14 @@ from decimal import Decimal
 import boto3
 import os
 
+project_root = os.getcwd()
+
+basic_hwp_path = os.path.join(project_root, "test_hwp", "Basic.hwp")
+temp_hwp_path = os.path.join(project_root, "test_hwp", "temp")
+hwp_result_path = os.path.join(project_root, "test_hwp", "hwp_results")
+pdf_result_path = os.path.join(project_root, "test_hwp", "pdf_results")
+resized_pdf_result_path = os.path.join(project_root, "test_hwp", "resized_pdf_results")
+
 def init_hwp():
     hwp = win32.gencache.EnsureDispatch("hwpframe.hwpobject")
     hwp.XHwpWindows.Item(0).Visible = False
@@ -12,7 +20,7 @@ def init_hwp():
     return hwp
 
 def basic_file():
-    filePath = "C:\\Users\\송준혁\\CDB-BE\\cdb-be\\test_hwp\\Basic.hwp"
+    filePath = basic_hwp_path
     hwp.Open(filePath, "HWP", "forceopen:true")
     hwp.Run("MoveTopLevelEnd")
 
@@ -58,7 +66,7 @@ def number_style():
 def add_question(question_code, index):
     bucket_name = "cdb-math"
     object_name = f"uploads/{question_code}.hwp"
-    local_dir = "C:\\Users\\송준혁\\CDB-BE\\cdb-be\\test_hwp\\temp"
+    local_dir = temp_hwp_path
     local_file_name = os.path.join(local_dir, f"{question_code}.hwp")
     download_file_from_s3(bucket_name, object_name, local_file_name)
 
@@ -123,15 +131,15 @@ if __name__ == "__main__":
             k = 0
         add_question(i, k)
         k = k+1
-    file_hwp = "C:\\Users\\송준혁\\CDB-BE\\cdb-be\\test_hwp\\hwp_results\\{}.hwp".format(fileName)
+    file_hwp = hwp_result_path + "\\" + fileName + ".hwp"
     #hwp 파일 저장
     #save_file(file_hwp)
     
-    file_pdf = "C:\\Users\\송준혁\\CDB-BE\\cdb-be\\test_hwp\\pdf_results\\{}.pdf".format(fileName)
+    file_pdf = pdf_result_path + "\\" + fileName + ".pdf"
     #pdf 파일로 변환
     hwpToPDF(file_pdf)
 
-    resized_pdf = "C:\\Users\\송준혁\\CDB-BE\\cdb-be\\test_hwp\\resized_pdf_results\\{}.pdf".format(fileName)
+    resized_pdf = resized_pdf_result_path + "\\" + fileName + ".pdf"
     resize_pdf_centered(file_pdf, resized_pdf, 0.9)
     upload_file_to_s3(resized_pdf, "cdb-math", f"uploads/results/{fileName}.pdf")
     cleanup_file(file_pdf)

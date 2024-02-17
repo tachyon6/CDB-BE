@@ -1,16 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { spawn } from 'child_process';
-import { Codes, CompleteFileInput } from './dto/create-file.dto';
-import { DataSource, In } from 'typeorm';
+import { Codes, CompleteFileInput, DownloadLogDto } from './dto/create-file.dto';
+import { Between, DataSource, In, Repository } from 'typeorm';
 import { QuestionMath } from 'src/entities/question-math.entity';
 import { createHash } from 'crypto';
 import { CompleteMath } from 'src/entities/complete-math.entity';
+import { DownloadLog } from 'src/entities/download-log.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import moment from 'moment-timezone';
 
 
 @Injectable()
 export class CombinatorService {
     constructor(
         private readonly dataSource: DataSource,
+        @InjectRepository(DownloadLog)
+        private downloadLogRepository: Repository<DownloadLog>,
     ) { }
 
     async isCodeExist(code: string): Promise<boolean> {
@@ -36,6 +41,42 @@ export class CombinatorService {
         return codes.question_codes.map(code => questionsMap.get(code) || '');
     }
 
+    async createDownloadLog(title: string, input: string): Promise<string> {
+        const newDownloadLog = this.dataSource.getRepository(DownloadLog).create({
+            title,
+            input,
+        });
+
+        await this.dataSource.getRepository(DownloadLog).save(newDownloadLog);
+        return 'Success';
+    }
+
+    async getDownloadLogByDay(date: string): Promise<DownloadLogDto[]> {
+        //date 형식: 'YYYYMMDD'
+        const year = parseInt(date.substring(0, 4), 10);
+        const month = parseInt(date.substring(4, 6), 10) - 1; // JS에서 월은 0부터 시작합니다.
+        const day = parseInt(date.substring(6, 8), 10);
+    
+        // 시작 날짜와 종료 날짜 생성
+        const startDate = new Date(year, month, day);
+        const endDate = new Date(year, month, day + 1);
+
+
+        const logs = await this.downloadLogRepository.find({
+            where: {
+                created_at: Between(startDate, endDate),
+            },
+        });
+
+        return logs.map(log => ({
+            id: log.id,
+            title: log.title,
+            input: log.input,
+            created_at: moment(log.created_at).tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss'),
+        }));
+
+    }
+
     async combine(completeFileInput: CompleteFileInput): Promise<string> {
         return new Promise<string>(async (resolve, reject) => {
             const title = completeFileInput.file_name;
@@ -53,7 +94,6 @@ export class CombinatorService {
 
                 const notExistCodes = checks.filter(check => !check.exists).map(check => check.code);
                 if (notExistCodes.length > 0) {
-                    // 존재하지 않는 코드가 있을 경우 에러 메시지 반환
                     return reject(`문항번호 ${notExistCodes.join(', ') + '가 존재하지 않는 문항 번호입니다.'}`);
                 }
 
