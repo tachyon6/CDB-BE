@@ -3,7 +3,7 @@ import sys
 import os
 import boto3
 
-project_root = os.getcwd()
+project_root = os.path.join(os.getcwd(), "Desktop", "CDB-BE")
 
 ans_basic_hwp_path = os.path.join(project_root, "test_hwp", "Answer.hwp")
 ans_pdf_result_path = os.path.join(project_root, "test_hwp", "pdf_results_ans")

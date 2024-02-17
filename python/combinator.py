@@ -5,7 +5,7 @@ from decimal import Decimal
 import boto3
 import os
 
-project_root = os.getcwd()
+project_root = os.path.join(os.getcwd(), "Desktop", "CDB-BE")
 
 basic_hwp_path = os.path.join(project_root, "test_hwp", "Basic.hwp")
 temp_hwp_path = os.path.join(project_root, "test_hwp", "temp")
