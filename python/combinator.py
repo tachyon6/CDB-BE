@@ -4,9 +4,9 @@ import pikepdf
 from decimal import Decimal
 import boto3
 import os
+import traceback
 
-project_root = os.path.join(os.getcwd(), "Desktop", "CDB-BE")
-
+project_root = os.getcwd()
 basic_hwp_path = os.path.join(project_root, "test_hwp", "Basic.hwp")
 temp_hwp_path = os.path.join(project_root, "test_hwp", "temp")
 hwp_result_path = os.path.join(project_root, "test_hwp", "hwp_results")
@@ -64,20 +64,23 @@ def number_style():
     hwp.Run("PutParaNumber")
 
 def add_question(question_code, index):
-    bucket_name = "cdb-math"
-    object_name = f"uploads/{question_code}.hwp"
-    local_dir = temp_hwp_path
-    local_file_name = os.path.join(local_dir, f"{question_code}.hwp")
-    download_file_from_s3(bucket_name, object_name, local_file_name)
+    try:
+        bucket_name = "cdb-math"
+        object_name = f"uploads/{question_code}.hwp"
+        local_file_name = os.path.join(temp_hwp_path, f"{question_code}.hwp")
+        download_file_from_s3(bucket_name, object_name, local_file_name)
 
-    append_hwp(local_file_name)
-    if index != 1:
-        number_style()
-    hwp.Run("MoveTopLevelEnd")
-    if index != 0:
-        hwp.Run("BreakColumn")
+        append_hwp(local_file_name)
+        if index != 1:
+            number_style()
+        hwp.Run("MoveTopLevelEnd")
+        if index != 0:
+            hwp.Run("BreakColumn")
 
-    cleanup_file(local_file_name)
+        cleanup_file(local_file_name)
+    except Exception as e:
+        print(f"An error occurred in add_question: {e}")
+        traceback.print_exc()
 
 def hwpToPDF(filePath):
     hwp.HAction.GetDefault("FileSaveAsPdf", hwp.HParameterSet.HFileOpenSave.HSet)

@@ -34,4 +34,11 @@ export class CombinatorResolver {
     ): Promise<string> {
         return await this.combinatorService.combine(completeFileInput);
     }
+
+    @Mutation(() => String)
+    async pythonTest(
+        @Args('complete_file_input') completeFileInput: CompleteFileInput,
+    ): Promise<string> {
+        return await this.combinatorService.pythonTest(completeFileInput);
+    }
 }

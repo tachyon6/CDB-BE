@@ -109,6 +109,7 @@ input FilterQuestionMathDto {
 type Mutation {
   createDownloadLog(title: String!, input: String!): String!
   combine(complete_file_input: CompleteFileInput!): String!
+  pythonTest: String!
   createSubjectMath(unit: String!): SubjectMathDto!
   createSectionMath(section: String!, unit_name: String!): SectionMathDto!
   createDiffMath(name: String!): DiffMathDto!
