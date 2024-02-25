@@ -174,5 +174,28 @@ export class MathResolver {
     return this.mathService.getCurationList();
   }
 
+  @Mutation(() => String)
+  async deleteCurationList(
+    @Args('curation_id') curationId: number 
+  ): Promise<String> {
+    return this.mathService.deleteCurationList(curationId);
+  }
+
+  @Mutation(() => String)
+  async updateCurationList(
+    @Args('curation_id') curationId: number,
+    @Args('create_curation_list') createCurationList: CreateCurationListDto
+  ): Promise<String> {
+    return this.mathService.updateCurationList(curationId, createCurationList);
+  }
+
+  @Query(() => CurationListDto, { nullable: true })
+  async getOneCurationList(
+    @Args('curation_id') curationId: number
+  ): Promise<CurationListDto> {
+    return this.mathService.getOneCurationList(curationId);
+  }
+
+
 
 }

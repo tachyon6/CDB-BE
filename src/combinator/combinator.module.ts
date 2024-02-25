@@ -5,6 +5,7 @@ import { QuestionMath } from 'src/entities/question-math.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CompleteMath } from 'src/entities/complete-math.entity';
 import { DownloadLog } from 'src/entities/download-log.entity';
+import { ProgressGateway } from 'src/progress/progress.gateway';
 
 @Module({
   imports: [
@@ -13,6 +14,6 @@ import { DownloadLog } from 'src/entities/download-log.entity';
       CompleteMath,
       DownloadLog,
     ])],
-  providers: [CombinatorService, CombinatorResolver],
+  providers: [CombinatorService, CombinatorResolver, ProgressGateway],
 })
 export class CombinatorModule { }

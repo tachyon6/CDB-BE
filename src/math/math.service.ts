@@ -39,7 +39,7 @@ export class MathService {
     private monthMathRepository: Repository<MonthMath>,
     @InjectRepository(YearMath)
     private yearMathRepository: Repository<YearMath>,
-  ) { }
+  ) {}
 
   async hello(): Promise<string> {
     return 'Hello World!';
@@ -421,7 +421,10 @@ export class MathService {
       });
 
     if (existingQuestion) {
-      return this.updateQuestionMath(questionDetails.code, createQuestionMathDto);
+      return this.updateQuestionMath(
+        questionDetails.code,
+        createQuestionMathDto,
+      );
     }
 
     const yearMath = await this.yearMathRepository.findOneBy({
@@ -668,4 +671,67 @@ export class MathService {
     }));
   }
 
+  ////선별 리스트 수정하기
+  async updateCurationList(
+    id: number,
+    createCurationListDto: CreateCurationListDto,
+  ): Promise<String> {
+    const { name, list, subject } = createCurationListDto;
+
+    const curationList = await this.dataSource
+      .getRepository(CurationList)
+      .findOne({
+        where: { id },
+      });
+    if (!curationList) {
+      throw new Error('CurationList entity not found.');
+    }
+
+    curationList.name = name;
+    curationList.list = list;
+    curationList.subject = subject;
+
+    const savedCurationList = await this.dataSource
+      .getRepository(CurationList)
+      .save(curationList);
+
+    return '선별 리스트가 수정되었습니다.';
+  }
+
+  ////선별 리스트 삭제하기
+  async deleteCurationList(id: number): Promise<String> {
+    const curationList = await this.dataSource
+      .getRepository(CurationList)
+      .findOne({
+        where: { id },
+      });
+    if (!curationList) {
+      throw new Error('CurationList entity not found.');
+    }
+
+    await this.dataSource
+      .getRepository(CurationList)
+      .remove(curationList);
+
+    return '선별 리스트가 삭제되었습니다.';
+  }
+
+  ////선별 리스트 조회하기
+  async getOneCurationList(id: number): Promise<CurationListDto> {
+    const curationList = await this.dataSource
+      .getRepository(CurationList)
+      .findOne({
+        where: { id },
+      });
+    if (!curationList) {
+      throw new Error('CurationList entity not found.');
+    }
+
+    return {
+      id: curationList.id,
+      name: curationList.name,
+      list: curationList.list,
+      subject: curationList.subject,
+    };
+  }
 }

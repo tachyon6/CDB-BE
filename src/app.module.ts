@@ -18,6 +18,7 @@ import { YearMath } from './entities/year-math.entity';
 import { CombinatorModule } from './combinator/combinator.module';
 import { AdminModule } from './admin/admin.module';
 import { DownloadLog } from './entities/download-log.entity';
+import { ProgressGateway } from './progress/progress.gateway';
 
 
 
@@ -46,6 +47,6 @@ import { DownloadLog } from './entities/download-log.entity';
     AdminModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, ProgressGateway],
 })
 export class AppModule { }

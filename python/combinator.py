@@ -118,35 +118,38 @@ def resize_pdf_centered(input_pdf_path, output_pdf_path, scale_factor):
         pdf.save(output_pdf_path)
 
 if __name__ == "__main__":
-    fileName = sys.argv[1]
-    title = sys.argv[2]
-    question_input = sys.argv[3:]
+    try:
+        fileName = sys.argv[1]
+        title = sys.argv[2]
+        question_input = sys.argv[3:]
     
-    hwp = init_hwp()
-    basic_file()
-    set_title(title)
+        hwp = init_hwp()
+        basic_file()
+        set_title(title)
 
-
-##문항 출력
-    k=1
-    for i in question_input:
-        if(k == question_input.__len__()):
-            k = 0
-        add_question(i, k)
-        k = k+1
-    file_hwp = hwp_result_path + "\\" + fileName + ".hwp"
-    #hwp 파일 저장
-    #save_file(file_hwp)
+        k=1
+        for i in question_input:
+            if(k == question_input.__len__()):
+                k = 0
+            add_question(i, k)
+            k = k+1
+        file_hwp = hwp_result_path + "\\" + fileName + ".hwp"
+        #hwp 파일 저장
+        #save_file(file_hwp)
     
-    file_pdf = pdf_result_path + "\\" + fileName + ".pdf"
-    #pdf 파일로 변환
-    hwpToPDF(file_pdf)
+        file_pdf = pdf_result_path + "\\" + fileName + ".pdf"
+        #pdf 파일로 변환
+        hwpToPDF(file_pdf)
 
-    resized_pdf = resized_pdf_result_path + "\\" + fileName + ".pdf"
-    resize_pdf_centered(file_pdf, resized_pdf, 0.9)
-    upload_file_to_s3(resized_pdf, "cdb-math", f"uploads/results/{fileName}.pdf")
-    cleanup_file(file_pdf)
-    cleanup_file(resized_pdf)
-    hwp.Clear(option=1)
-    hwp.Quit()
-    print("Done" + fileName)
+        resized_pdf = resized_pdf_result_path + "\\" + fileName + ".pdf"
+        resize_pdf_centered(file_pdf, resized_pdf, 0.9)
+        upload_file_to_s3(resized_pdf, "cdb-math", f"uploads/results/{fileName}.pdf")
+        cleanup_file(file_pdf)
+        cleanup_file(resized_pdf)
+    except Exception as e:
+        print(f"An error occurred: {e}")
+    finally:
+        if 'hwp' in locals():
+            hwp.Clear(option=1)
+            hwp.Quit()
+            print("HWP Application has been closed.")

@@ -2,10 +2,10 @@ import win32com.client as win32
 import sys
 import os
 import boto3
+import uuid
 
 project_root = os.getcwd()
 
-ans_basic_hwp_path = os.path.join(project_root, "test_hwp", "Answer.hwp")
 ans_pdf_result_path = os.path.join(project_root, "test_hwp", "pdf_results_ans")
 
 def init_hwp():
@@ -14,8 +14,7 @@ def init_hwp():
     hwp.RegisterModule("FilePathCheckDLL", "FilePathCheckerModule")
     return hwp
 
-def basic_file():
-    filePath = ans_basic_hwp_path
+def basic_file(filePath):
     hwp.Open(filePath, "HWP", "forceopen:true")
 
 def push_number_and_answer(num, answer):
@@ -62,25 +61,43 @@ def upload_file_to_s3(local_file_name, bucket_name, object_name):
     s3.upload_file(local_file_name, bucket_name, object_name)
     print(f"Uploaded {local_file_name} to s3://{bucket_name}/{object_name}")
 
+def download_file_from_s3(bucket_name, object_name, local_file_name):
+    s3 = boto3.client('s3')
+    s3.download_file(bucket_name, object_name, local_file_name)
+
+def download_answer_file(file_name):
+    download_file_from_s3("cdb-math", "basic_files/Answer.hwp", file_name)  
         
+def generate_fileName():
+    unique_id = uuid.uuid4()
+    filename = f"hwp_{unique_id}"
+    return filename
 
 if __name__ == "__main__":
-    hwp = init_hwp()
-    basic_file()
+    try:
+        fileName = sys.argv[1]
+        answers = sys.argv[2:]
 
-    fileName = sys.argv[1]
-    answers = sys.argv[2:]
+        ans_basic_hwp_path = os.path.join(project_root, "test_hwp", generate_fileName()+ "_answer.hwp")
+        download_answer_file(ans_basic_hwp_path)
 
-    make_box_size(len(answers))
+        hwp = init_hwp()
+        basic_file(ans_basic_hwp_path)
+        make_box_size(len(answers))
 
-    for i in range(len(answers)):
-        push_number_and_answer(i+1, answers[i])
+        for i in range(len(answers)):
+            push_number_and_answer(i+1, answers[i])
 
-    file_pdf = os.path.join(ans_pdf_result_path, f"{fileName}.pdf")
-    hwpToPDF(file_pdf)
+        file_pdf = os.path.join(ans_pdf_result_path, f"{fileName}.pdf")
+        hwpToPDF(file_pdf)
 
-    upload_file_to_s3(file_pdf, "cdb-math", f"uploads/results_ans/{fileName}.pdf")
-    cleanup_file(file_pdf)
-    hwp.Clear(option=1)
-    hwp.Quit()
-    print("Done Ans")
+        upload_file_to_s3(file_pdf, "cdb-math", f"uploads/results_ans/{fileName}.pdf")
+        cleanup_file(file_pdf)
+    except Exception as e:
+        print(f"An error occurred: {e}")
+    finally:
+        if 'hwp' in locals():
+            hwp.Clear(option=1)
+            hwp.Quit()
+            cleanup_file(ans_basic_hwp_path)
+            print("HWP Application has been closed.")
